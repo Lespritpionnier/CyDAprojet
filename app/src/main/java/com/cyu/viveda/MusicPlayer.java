@@ -2,9 +2,11 @@ package com.cyu.viveda;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.ObjectAnimator;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -30,6 +32,9 @@ public class MusicPlayer extends AppCompatActivity {
 
     private boolean isPausing = false;
     private boolean isPlaying = false;
+
+    /* juste pour s'amuser, tourner l'image pendant music */
+    private ObjectAnimator animator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,11 @@ public class MusicPlayer extends AppCompatActivity {
 
         OnSeekBarChangeControl onChange = new OnSeekBarChangeControl();
         musicProgress.setOnSeekBarChangeListener(onChange);
+
+        animator = ObjectAnimator.ofFloat(diskImage, "rotation", 0, 360.0F);
+        animator.setDuration(5000);
+        animator.setInterpolator(new LinearInterpolator());
+        animator.setRepeatCount(-1);
     }
 
     private void preparePlaylist() {
@@ -120,18 +130,22 @@ public class MusicPlayer extends AppCompatActivity {
                     prepareMedia();
                     isPausing = false;
                     isPlaying = true;
+                    animator.start();
                     break;
                 case R.id.btn_play_pause:
                     if (!isPausing && !isPlaying) {
                         playPauseBtn.setImageResource(R.drawable.pause);
                         prepareMedia();
                         isPlaying = true;
+                        animator.start();
                     } else if (isPausing && isPlaying) {
                         playPauseBtn.setImageResource(R.drawable.pause);
                         player.start();
+                        animator.resume();
                     } else {
                         playPauseBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
                         player.pause();
+                        animator.pause();
                     }
                     isPausing = !isPausing;
                     break;
@@ -141,6 +155,7 @@ public class MusicPlayer extends AppCompatActivity {
                     prepareMedia();
                     isPausing = false;
                     isPlaying = true;
+                    animator.start();
                     break;
             }
         }
