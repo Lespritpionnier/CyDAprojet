@@ -25,17 +25,20 @@ public class MusicPlayer extends AppCompatActivity {
 
             }
 
-    public void Player(View view) {
-
-        Intent AudioPlayer = new Intent(getApplicationContext(), Player.class);
-
-        startActivity(AudioPlayer);
-
-    }
-
     public void FindFile(View view) {
         Intent FindSound = new Intent(getApplicationContext(), FindFile.class);
 
         startActivity(FindSound);
+    }
+
+    public void playlist(View view) {
+    //TODO
+    }
+
+    public void player(View view) {
+    Player player =  null ;
+    player.getPlayer();
+    Intent PlayerMusiq =new Intent(player.getPlayer(),Player.class);
+    startActivity(PlayerMusiq);
     }
 }

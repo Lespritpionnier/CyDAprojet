@@ -1,4 +1,7 @@
 package com.cyu.viveda;
 
-public class PlayList {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class PlayList extends AppCompatActivity {
+
 }

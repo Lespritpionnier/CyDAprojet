@@ -18,10 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Player" >
         </activity>
         <activity android:name=".FindFile" >
+        </activity>
+        <activity android:name=".AddPlayListActivity" >
         </activity>
 
     </application>

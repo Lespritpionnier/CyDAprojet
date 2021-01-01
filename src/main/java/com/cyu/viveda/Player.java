@@ -1,10 +1,14 @@
 package com.cyu.viveda;
 
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -12,21 +16,27 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Player extends AppCompatActivity {
+   Player getPlayer (){
+       return Player.this;
+   }
     private TextView songName, singerName;
     private ImageView diskImage;
-
     private SeekBar musicProgress;
     private TextView currentTime, totalTime;
     private ImageButton prevBtn, playPauseBtn, nextBtn;
+    int position;
+    ArrayList<File> mySongs;
+
 
     public static MediaPlayer player;
-
+    String sname;
     private int currentPlaying = 0;
     private ArrayList<Integer> playList = new ArrayList<>();
 
@@ -42,11 +52,11 @@ public class Player extends AppCompatActivity {
         setContentView(R.layout.player_main);
 
         init();
-        preparePlaylist();
+        prepareMedia();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (isPlaying) {
+                if (player != null) {
                     updateTimer();
                 }
 
@@ -80,7 +90,7 @@ public class Player extends AppCompatActivity {
         animator.setRepeatCount(-1);
     }
 
-    private void preparePlaylist() {
+ /*   private void preparePlaylist() {
         if (player !=null) {
             player.stop();}
 
@@ -93,15 +103,29 @@ public class Player extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     private void prepareMedia() {
+
         if (player !=null) {
             player.stop();
             player.release();
         }
+        Intent i = getIntent();
+        Bundle b = i.getExtras();
 
-        player = MediaPlayer.create(getApplicationContext(), playList.get(currentPlaying));
+        mySongs = (ArrayList) b.getParcelableArrayList("songs");
+
+        sname = mySongs.get(position).getName().toString();
+
+        position = b.getInt("pos",0);
+        Uri u = Uri.parse(mySongs.get(position).toString());
+
+        songName.setText(sname);
+        songName.setSelected(true);
+
+        player = MediaPlayer.create(getApplicationContext(),u);
+
         int musicDuration = player.getDuration();
         musicProgress.setMax(musicDuration);
         int sec = musicDuration / 1000;
@@ -110,6 +134,7 @@ public class Player extends AppCompatActivity {
         String musicTime = String.format("%02d:%02d", min, sec);
         totalTime.setText(musicTime);
         player.start();
+
     }
 
     private void updateTimer() {
