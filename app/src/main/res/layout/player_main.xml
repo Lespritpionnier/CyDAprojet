@@ -29,8 +29,8 @@
         android:layout_below="@id/song_singer"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="250dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="200dp"
         android:src="@drawable/cover_art" />
 
     <RelativeLayout
@@ -75,13 +75,14 @@
             android:layout_toStartOf="@id/btn_play_pause"
             android:scaleType="fitCenter"
             android:layout_centerHorizontal="true"/>
+
         <ImageButton
             android:id="@+id/btn_play_pause"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:src="@drawable/pause"
+            android:layout_centerHorizontal="true"
             android:scaleType="fitCenter"
-            android:layout_centerHorizontal="true"/>
+            android:src="@drawable/ic_play_arrow_black_24dp" />
         <ImageButton
             android:id="@+id/btn_next"
             android:layout_width="64dp"
@@ -90,6 +91,16 @@
             android:layout_toEndOf="@id/btn_play_pause"
             android:scaleType="fitCenter"
             android:layout_centerHorizontal="true"/>
+
+        <ImageButton
+            android:id="@+id/btn_list"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="66dp"
+            android:layout_toEndOf="@id/btn_play_pause"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_playlist_queue" />
     </RelativeLayout>
 
 </RelativeLayout>

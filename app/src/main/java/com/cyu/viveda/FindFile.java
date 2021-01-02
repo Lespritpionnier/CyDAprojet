@@ -36,8 +36,6 @@ public class FindFile extends AppCompatActivity {
                 PERMISSIONS_REQUEST);
 
         display();
-
-
     }
 
     public ArrayList<File> findSong(File root){
@@ -56,6 +54,7 @@ public class FindFile extends AppCompatActivity {
         }
         return at;
     }
+
     void display(){
         final ArrayList<File> mySongs = findSong(Environment.getExternalStorageDirectory());
         items = new String[ mySongs.size() ];
@@ -67,15 +66,11 @@ public class FindFile extends AppCompatActivity {
                 ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
         listView.setAdapter(adp);
 
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int
-                    position, long l) {
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String songName = listView.getItemAtPosition(position).toString();
                 startActivity(new Intent(getApplicationContext(),Player.class)
-
                         .putExtra("pos",position).putExtra("songs",mySongs).putExtra("songname",songName));
             }
         });
