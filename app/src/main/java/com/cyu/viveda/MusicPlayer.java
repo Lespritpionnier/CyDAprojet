@@ -191,29 +191,31 @@ public class MusicPlayer extends AppCompatActivity {
                     JsonObjectRequest  request = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+                             JSONObject actualtrackInfo = null;
+                            String name = "";
+                            String artist = "";
                             try {
-                                    JSONArray songdetails = response.getJSONArray("results");
-                                            for(int i=0; i< songdetails.length(); i++) {
-                                                //  String songname = songdetails.getString("name");
+                                JSONObject songdetails = response.getJSONObject("results");
+                                 JSONObject trackmatches = songdetails.getJSONObject("trackmatches");
+                                  JSONArray   track = trackmatches.getJSONArray("track");
+                                   actualtrackInfo = track.optJSONObject(0);
+                                   name = actualtrackInfo.getString("name");
+                                   artist = actualtrackInfo.getString("artist");
+
+
+                                // name = trackInfo.getString("artist");
+
+                                                                 //  String songname = songdetails.getString("name");
                                                 //String singername = songdetails.getString("track");
-                                                JSONObject myIterator = songdetails.getJSONObject( i );
-                                                JSONArray arrayOne = myIterator.getJSONArray( "track" );
 
-                                                for(int j=0; j<arrayOne.length(); j++){
-                                                    JSONObject myInnerIterator = arrayOne.getJSONObject( j );
-                                                    if(myInnerIterator.has( "name" )) {//check if 'size' key is present
-                                                        String nomchanteur = myInnerIterator.getString("name");
-                                                        Toast.makeText(MusicPlayer.this, "song Name =" +nomchanteur , Toast.LENGTH_SHORT).show();
-
-                                                    }
-                                                }
-                                            }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-                            Toast.makeText(MusicPlayer.this, "song Name ="  , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MusicPlayer.this, "song Name =" + name +"\n"+ "Artist ="+ artist
+
+                                    , Toast.LENGTH_SHORT).show();
                         }
                     }, new Response.ErrorListener() {
                         @Override
