@@ -185,7 +185,7 @@ public class MusicPlayer extends AppCompatActivity {
 
 // Instantiate the RequestQueue.
                     RequestQueue queue = Volley.newRequestQueue(MusicPlayer.this);
-                    String url ="http://ws.audioscrobbler.com/2.0/?method=track.search&track=hello&limit=2&api_key=24f4c03a73a91359dc8a79fe0108d9d8&format=json";
+                    String url ="https://ws.audioscrobbler.com/2.0/?method=track.search&track=empire-state-of-mind&limit=2&api_key=24f4c03a73a91359dc8a79fe0108d9d8&format=json";
 
 
                     JsonObjectRequest  request = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
@@ -213,14 +213,13 @@ public class MusicPlayer extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            Toast.makeText(MusicPlayer.this, "song Name =" + name +"\n"+ "Artist ="+ artist
+                            Toast.makeText(MusicPlayer.this, "Song Name =" + name +"\n"+ "Artist ="+ artist, Toast.LENGTH_SHORT).show();
 
-                                    , Toast.LENGTH_SHORT).show();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(MusicPlayer.this, "An error has occured wjile fetching the data", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MusicPlayer.this, "An error has occured while fetching the data", Toast.LENGTH_SHORT).show();
 
                         }
                     });
