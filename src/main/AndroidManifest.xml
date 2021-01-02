@@ -11,16 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CyDAp">
-        <activity android:name=".Player"
-            android:screenOrientation="portrait">
+        <activity android:name=".MusicPlayer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MusicPlayer" >
+        <activity android:name=".Player" >
         </activity>
         <activity android:name=".FindFile" >
         </activity>
