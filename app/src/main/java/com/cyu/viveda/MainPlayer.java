@@ -12,10 +12,21 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -166,6 +177,7 @@ public class MainPlayer extends AppCompatActivity {
         totalTime.setText(musicTime);
 
         musicPrepared= true;
+        infoMusicInternet();
     }
 
     private void updateTimer() {
@@ -304,5 +316,67 @@ public class MainPlayer extends AppCompatActivity {
         }
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) { player.start(); }
+    }
+
+
+
+    public void infoMusicInternet (){
+        //Voici la partie independant pour API en ligne
+        RequestQueue queue = Volley.newRequestQueue(MainPlayer.this);
+        String url ="https://ws.audioscrobbler.com/2.0/?method=track.search&track=" +
+                sname.replace(".mp3","").replace(".wav","") +
+                "&limit=2&api_key=24f4c03a73a91359dc8a79fe0108d9d8&format=json";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject actualtrackInfo = null;
+                String name = "";
+                String artist = "";
+                try {
+                    JSONObject songdetails = response.getJSONObject("results");
+                    JSONObject trackmatches = songdetails.getJSONObject("trackmatches");
+                    JSONArray track = trackmatches.getJSONArray("track");
+                    actualtrackInfo = track.optJSONObject(0);
+                    name = actualtrackInfo.getString("name");
+                    artist = actualtrackInfo.getString("artist");
+
+                    // name = trackInfo.getString("artist");
+
+                    //  String songname = songdetails.getString("name");
+                    //String singername = songdetails.getString("track");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(MainPlayer.this, "Song Name =" + name +"\n"+ "Artist ="+ artist, Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainPlayer.this, "An error has occured while fetching the data", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(request);
+// Request a string response from the provided URL.
+                /*    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    // Display the first 500 characters of the response string.
+                                    Toast.makeText(MusicPlayer.this, response, Toast.LENGTH_SHORT).show();
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(MusicPlayer.this, "An error has occured while fetching the data", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });  */
+
+
+        //Toast.makeText(MusicPlayer.this,"The name of the artist is: -------", Toast.LENGTH_SHORT).show();
     }
 }
