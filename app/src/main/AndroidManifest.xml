@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CyDAp">
-        <activity android:name=".PlayList"></activity>
+        <activity android:name=".OnePlayList"></activity>
+        <activity android:name=".PlayList" />
 
         <service
             android:name=".MusicService"

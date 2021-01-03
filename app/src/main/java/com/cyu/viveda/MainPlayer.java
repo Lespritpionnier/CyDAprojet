@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
@@ -142,15 +143,19 @@ public class MainPlayer extends AppCompatActivity {
      //   position = b.getInt("pos",0);
 
       //  Uri sharedFileUri = FileProvider.getUriForFile(this, FindFile, mySongs.get(position));
-        Uri u = Uri.fromFile(mySongs.get(position));
+
+        File test8 = new File(mySongs.get(position).toString());
+        Uri u = Uri.fromFile(test8);
         sname=mySongs.get(position).getName();
 
         songName.setText(sname);
         songName.setSelected(true);
 
-        String test = u.toString();
-        Uri good = Uri.parse(test);
-        player = MediaPlayer.create(getApplicationContext(),good);
+        //Idea for stocage
+        //String test = u.toString();
+        //Uri good = Uri.parse(test);
+
+        player = MediaPlayer.create(getApplicationContext(),u);
 
         int musicDuration = player.getDuration();
         musicProgress.setMax(musicDuration);
@@ -188,7 +193,7 @@ public class MainPlayer extends AppCompatActivity {
                     break;
                 case R.id.btn_list:
                     Intent intent7 = new Intent(MainPlayer.this,PlayList.class);
-                    startActivityForResult(intent7,7);
+                    startActivity(intent7);
                     break;
 
                 case R.id.btn_prev:
@@ -248,7 +253,6 @@ public class MainPlayer extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 6:
-            case 7:
                 if (resultCode == RESULT_OK) {
                     Bundle b = data.getExtras();
                     mySongs=(ArrayList) b.getParcelableArrayList("songs");
@@ -261,16 +265,35 @@ public class MainPlayer extends AppCompatActivity {
         }
     }
 
+    //TROP FORT
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        Log.e("onNewIntent","onNewIntent");
+
+        Intent listInfo = getIntent();
+        ArrayList<String> pathList = listInfo.getStringArrayListExtra("stringList");
+        if(pathList!=null){
+            Log.e("MAIN PLAYER","Nice Intent");
+            ArrayList<File> renewList = new ArrayList<>();
+            for(String stringFile : pathList){
+                renewList.add(new File(stringFile));
+            }
+            mySongs = renewList;
+            position=listInfo.getIntExtra("index",0);;
+            sname = listInfo.getStringExtra("name");
+            prepareMedia();
+            musicPrepared = true;
+        }
+    }
 
     public void Stop(){
-
        if(isPlaying)
            player.stop();
-
     }
+
     private class OnSeekBarChangeControl implements SeekBar.OnSeekBarChangeListener {
-
-
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {player.seekTo(progress); }

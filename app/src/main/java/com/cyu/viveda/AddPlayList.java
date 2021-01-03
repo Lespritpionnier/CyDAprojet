@@ -22,10 +22,7 @@ public class AddPlayList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_playliste);
-
-
-
-}
+    }
 
     public void setListSelected (ArrayList<String> list){
         list_items=list;
