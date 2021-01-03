@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CyDAp</string>
+    <string name="playliste">PlayListe</string>
+    <string name="add_song">ADD song</string>
 </resources>
