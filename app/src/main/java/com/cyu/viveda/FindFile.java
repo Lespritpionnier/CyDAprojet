@@ -8,12 +8,10 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import android.view.ActionMode;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.PermissionRequest;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -125,8 +123,11 @@ public class FindFile extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String songName = listView.getItemAtPosition(position).toString();
-                startActivity(new Intent(getApplicationContext(),Player.class)
-                        .putExtra("pos",position).putExtra("songs",mySongs).putExtra("songname",songName));
+               Intent intent = new Intent();
+                        intent.putExtra("songs",mySongs).putExtra("pos",position)
+                        .putExtra("songname",songName);
+                setResult(RESULT_OK,intent);
+                finish();
             }
         });
     }

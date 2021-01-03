@@ -2,43 +2,51 @@ package com.cyu.viveda;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Player extends AppCompatActivity {
-   Player getPlayer (){
-       return Player.this;
+public class MainPlayer extends AppCompatActivity {
+    private int requestCode;
+    private int resultCode;
+    private Intent data;
+
+    MainPlayer getPlayer (){
+       return MainPlayer.this;
    }
     private TextView songName, singerName;
     private ImageView diskImage;
     private SeekBar musicProgress;
     private TextView currentTime, totalTime;
-    private ImageButton prevBtn, playPauseBtn, nextBtn;
-    int position;
+    private ImageButton prevBtn, playPauseBtn, nextBtn, findBtn;
+    int position =0;
+
     ArrayList<File> mySongs;
 
 
     public static MediaPlayer player;
     String sname;
+
+/* for test before
     private int currentPlaying = 0;
     private ArrayList<Integer> playList = new ArrayList<>();
+
+ */
 
     private boolean isPausing = false;
     private boolean isPlaying = false;
@@ -46,13 +54,19 @@ public class Player extends AppCompatActivity {
     /* juste pour s'amuser, tourner l'image pendant music */
     private ObjectAnimator animator;
 
+    boolean musicPrepared = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_main);
 
         init();
-        prepareMedia();
+     //   Intent intent = new Intent(MainPlayer.this,FindFile.class);
+     //   startActivityForResult(intent,6);
+        //
+        //    prepareMedia();
+
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -63,6 +77,8 @@ public class Player extends AppCompatActivity {
             }
         };
         new Timer().scheduleAtFixedRate(timerTask, 0, 500);
+
+
     }
 
     void init() {
@@ -75,11 +91,13 @@ public class Player extends AppCompatActivity {
         prevBtn = findViewById(R.id.btn_prev);
         playPauseBtn = findViewById(R.id.btn_play_pause);
         nextBtn = findViewById(R.id.btn_next);
+        findBtn = findViewById(R.id.btn_find);
 
         OnClickControl onClick = new OnClickControl();
         prevBtn.setOnClickListener(onClick);
         playPauseBtn.setOnClickListener(onClick);
         nextBtn.setOnClickListener(onClick);
+        findBtn.setOnClickListener(onClick);
 
         OnSeekBarChangeControl onChange = new OnSeekBarChangeControl();
         musicProgress.setOnSeekBarChangeListener(onChange);
@@ -111,15 +129,18 @@ public class Player extends AppCompatActivity {
             player.stop();
             player.release();
         }
-        Intent i = getIntent();
-        Bundle b = i.getExtras();
+       // Intent i = getIntent();
+      //  Bundle b = i.getExtras();
 
-        mySongs = (ArrayList) b.getParcelableArrayList("songs");
+       // mySongs = (ArrayList) b.getParcelableArrayList("songs");
 
-        sname = mySongs.get(position).getName().toString();
+     //   sname = mySongs.get(position).getName().toString();
 
-        position = b.getInt("pos",0);
-        Uri u = Uri.parse(mySongs.get(position).toString());
+     //   position = b.getInt("pos",0);
+
+      //  Uri sharedFileUri = FileProvider.getUriForFile(this, FindFile, mySongs.get(position));
+        Uri u = Uri.fromFile(mySongs.get(position));
+        sname=mySongs.get(position).getName();
 
         songName.setText(sname);
         songName.setSelected(true);
@@ -133,8 +154,8 @@ public class Player extends AppCompatActivity {
         sec -= min * 60;
         String musicTime = String.format("%02d:%02d", min, sec);
         totalTime.setText(musicTime);
-        player.start();
 
+        musicPrepared= true;
     }
 
     private void updateTimer() {
@@ -150,55 +171,87 @@ public class Player extends AppCompatActivity {
     }
 
 
-
     private class OnClickControl implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.btn_prev:
-                    playPauseBtn.setImageResource(R.drawable.pause);
-                    if (!player.isPlaying()) {
-                        currentPlaying = --currentPlaying % playList.size();
-                    }
-                    prepareMedia();
-                    isPausing = false;
-                    isPlaying = true;
-                    animator.start();
+                //NEW PART ICI TRES FORT
+                case R.id.btn_find:
+                    Intent intent = new Intent(MainPlayer.this,FindFile.class);
+                    startActivityForResult(intent,6);
                     break;
-                case R.id.btn_play_pause:
-                    if (!isPausing && !isPlaying) {
+
+                case R.id.btn_prev:
+                    if(musicPrepared) {
                         playPauseBtn.setImageResource(R.drawable.pause);
+                            //Better to presenter in this way
+                        //if (!player.isPlaying())
+                            position = --position % mySongs.size();
                         prepareMedia();
+                        player.start();
+                        isPausing = false;
                         isPlaying = true;
                         animator.start();
-                    } else if (isPausing && isPlaying) {
-                        playPauseBtn.setImageResource(R.drawable.pause);
-                        player.start();
-                        animator.resume();
-                        isPausing = !isPausing;
-                    } else {
-                        playPauseBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-                        player.pause();
-                        animator.pause();
-                        isPausing = !isPausing;
+                    }
+                    break;
+                case R.id.btn_play_pause:
+                    if(musicPrepared) {
+                        if (!isPausing && !isPlaying) {
+                            playPauseBtn.setImageResource(R.drawable.pause);
+                            player.start();
+                            isPlaying = true;
+                            animator.start();
+                        } else if (isPausing && isPlaying) {
+                            playPauseBtn.setImageResource(R.drawable.pause);
+                            player.start();
+                            animator.resume();
+                            isPausing = !isPausing;
+                        } else {
+                            playPauseBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+                            player.pause();
+                            animator.pause();
+                            isPausing = !isPausing;
+                        }
                     }
                     break;
                 case R.id.btn_next:
-                    playPauseBtn.setImageResource(R.drawable.pause);
-                    currentPlaying = ++currentPlaying % playList.size();
-                    prepareMedia();
-                    isPausing = false;
-                    isPlaying = true;
-                    animator.start();
-                    break;
+                    if(musicPrepared) {
+                        playPauseBtn.setImageResource(R.drawable.pause);
+                        position = ++position % mySongs.size();
+                        prepareMedia();
+                        player.start();
+                        isPausing = false;
+                        isPlaying = true;
+                        animator.start();
+                        break;
+                    }
+                default:
             }
         }
     }
 
+    //CONTINUER FORT
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 6:
+                if (resultCode == RESULT_OK) {
+                    Bundle b = data.getExtras();
+                    mySongs=(ArrayList) b.getParcelableArrayList("songs");
+                    position = b.getInt("pos",0);
+                    sname = b.getString("songname");
+                    prepareMedia();
+                }
+                break;
+            default:
+        }
+    }
+
+
     public void Stop(){
 
        if(isPlaying)
-
            player.stop();
 
     }

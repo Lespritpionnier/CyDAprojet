@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.cyu.viveda">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -11,22 +14,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CyDAp">
-        <activity android:name=".Player"
-            android:screenOrientation="portrait">
+        <service
+            android:name=".MusicService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity
+            android:name=".MainPlayer"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MusicPlayer" >
-        </activity>
-        <activity android:name=".FindFile" >
-        </activity>
-        <activity android:name=".AddPlayListActivity" >
-        </activity>
-
+        <activity android:name=".MusicPlayer"></activity>
+        <activity android:name=".FindFile"></activity>
+        <activity android:name=".AddPlayListActivity"></activity>
     </application>
 
 </manifest>
