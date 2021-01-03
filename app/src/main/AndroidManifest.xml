@@ -14,10 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CyDAp">
+        <activity android:name=".PlayList"></activity>
+
         <service
             android:name=".MusicService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".MainPlayer"
@@ -28,9 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MusicPlayer"></activity>
-        <activity android:name=".FindFile"></activity>
-        <activity android:name=".AddPlayListActivity"></activity>
+        <activity android:name=".MusicPlayer" />
+        <activity android:name=".FindFile" />
+        <activity android:name=".AddPlayList" />
     </application>
 
 </manifest>

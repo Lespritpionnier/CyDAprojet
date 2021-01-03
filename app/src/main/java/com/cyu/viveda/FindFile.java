@@ -71,10 +71,10 @@ public class FindFile extends AppCompatActivity {
               switch (item.getItemId()){
                   case(R.id.add) :
                   //send the selected song in the new playlist
-                      AddPlayListActivity playlist= new AddPlayListActivity();
+                      AddPlayList playlist= new AddPlayList();
                       playlist.setListSelected(list_items);
 
-                      startActivity(new Intent(getApplicationContext(), AddPlayListActivity.class));
+                      startActivity(new Intent(getApplicationContext(), AddPlayList.class));
 
                       count=0;
                       mode.finish();

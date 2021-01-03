@@ -13,13 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class AddPlayListActivity extends AppCompatActivity {
+public class AddPlayList extends AppCompatActivity {
 
-    public static String TAG = "AddEventActivity";
-
-
-
+    String name;
     ArrayList<String> list_items;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +36,12 @@ public class AddPlayListActivity extends AppCompatActivity {
 
     }
     public void done(View view) {
-
-
-
+        EditText eTname = findViewById(R.id.editText);
+        name = eTname.getText().toString();
+        if(name.trim().equals("")) {
+            eTname.setError( "Name is required" );
+            eTname.setHint("Please enter an event name");
+            return;
+        }
     }
 }

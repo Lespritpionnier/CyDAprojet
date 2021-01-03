@@ -33,14 +33,15 @@ public class MainPlayer extends AppCompatActivity {
     private ImageView diskImage;
     private SeekBar musicProgress;
     private TextView currentTime, totalTime;
-    private ImageButton prevBtn, playPauseBtn, nextBtn, findBtn;
-    int position =0;
+    private ImageButton prevBtn, playPauseBtn, nextBtn, findBtn, listBtn;
+    int position = 0;
 
     ArrayList<File> mySongs;
 
 
     public static MediaPlayer player;
-    String sname;
+    String sname = null;
+
 
 /* for test before
     private int currentPlaying = 0;
@@ -92,12 +93,14 @@ public class MainPlayer extends AppCompatActivity {
         playPauseBtn = findViewById(R.id.btn_play_pause);
         nextBtn = findViewById(R.id.btn_next);
         findBtn = findViewById(R.id.btn_find);
+        listBtn = findViewById(R.id.btn_list);
 
         OnClickControl onClick = new OnClickControl();
         prevBtn.setOnClickListener(onClick);
         playPauseBtn.setOnClickListener(onClick);
         nextBtn.setOnClickListener(onClick);
         findBtn.setOnClickListener(onClick);
+        listBtn.setOnClickListener(onClick);
 
         OnSeekBarChangeControl onChange = new OnSeekBarChangeControl();
         musicProgress.setOnSeekBarChangeListener(onChange);
@@ -145,7 +148,9 @@ public class MainPlayer extends AppCompatActivity {
         songName.setText(sname);
         songName.setSelected(true);
 
-        player = MediaPlayer.create(getApplicationContext(),u);
+        String test = u.toString();
+        Uri good = Uri.parse(test);
+        player = MediaPlayer.create(getApplicationContext(),good);
 
         int musicDuration = player.getDuration();
         musicProgress.setMax(musicDuration);
@@ -175,10 +180,15 @@ public class MainPlayer extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+
                 //NEW PART ICI TRES FORT
                 case R.id.btn_find:
-                    Intent intent = new Intent(MainPlayer.this,FindFile.class);
-                    startActivityForResult(intent,6);
+                    Intent intent6 = new Intent(MainPlayer.this,FindFile.class);
+                    startActivityForResult(intent6,6);
+                    break;
+                case R.id.btn_list:
+                    Intent intent7 = new Intent(MainPlayer.this,PlayList.class);
+                    startActivityForResult(intent7,7);
                     break;
 
                 case R.id.btn_prev:
@@ -186,7 +196,9 @@ public class MainPlayer extends AppCompatActivity {
                         playPauseBtn.setImageResource(R.drawable.pause);
                             //Better to presenter in this way
                         //if (!player.isPlaying())
+                        if(position!=0)
                             position = --position % mySongs.size();
+                        else position = mySongs.size()-1;
                         prepareMedia();
                         player.start();
                         isPausing = false;
@@ -236,6 +248,7 @@ public class MainPlayer extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 6:
+            case 7:
                 if (resultCode == RESULT_OK) {
                     Bundle b = data.getExtras();
                     mySongs=(ArrayList) b.getParcelableArrayList("songs");
