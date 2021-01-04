@@ -1,10 +1,18 @@
 package com.cyu.viveda;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -33,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainPlayer extends AppCompatActivity {
+public class MainPlayer extends AppCompatActivity implements SensorEventListener {
     private int requestCode;
     private int resultCode;
     private Intent data;
@@ -47,6 +55,14 @@ public class MainPlayer extends AppCompatActivity {
     private TextView currentTime, totalTime;
     private ImageButton prevBtn, playPauseBtn, nextBtn, findBtn, listBtn;
     int position = 0;
+
+    private SensorManager sensorManager;
+    private Sensor accelerometerSensor;
+    private Boolean isAccelerometerSensorAvailable , itIsNotTheSameValue = false;
+    private float currentX, currentY, currentZ, lastX, lastY, lastZ;
+    private float xDifference, yDifference, zDifference;
+    private float shakeThresold =5f;
+    private Vibrator vibrator;
 
     ArrayList<File> mySongs;
 
@@ -73,6 +89,17 @@ public class MainPlayer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_main);
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            isAccelerometerSensorAvailable = true;
+        }
+        else{
+            isAccelerometerSensorAvailable = false;
+        }
 
         init();
      //   Intent intent = new Intent(MainPlayer.this,FindFile.class);
@@ -378,5 +405,66 @@ public class MainPlayer extends AppCompatActivity {
 
 
         //Toast.makeText(MusicPlayer.this,"The name of the artist is: -------", Toast.LENGTH_SHORT).show();
+    }
+
+
+    //There is the part for sensor
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        currentX= sensorEvent.values[0];
+        currentY = sensorEvent.values[1];
+        currentZ = sensorEvent.values[2];
+
+        if (itIsNotTheSameValue == true) {
+            xDifference = Math.abs(lastX - currentX);
+            yDifference = Math.abs(lastY - currentY);
+            zDifference = Math.abs(lastZ - currentZ);
+
+            if ((xDifference > shakeThresold && yDifference > shakeThresold) ||
+                    (xDifference > shakeThresold && zDifference > shakeThresold) ||
+                    (yDifference > shakeThresold && zDifference > shakeThresold)
+            ) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                    if(musicPrepared) {
+                        playPauseBtn.setImageResource(R.drawable.pause);
+                        position = ++position % mySongs.size();
+                        prepareMedia();
+                        player.start();
+                        isPausing = false;
+                        isPlaying = true;
+                        animator.start();
+                    }
+                } else {
+                    vibrator.vibrate(500);
+                }
+            }
+        }
+        lastX= currentX;
+        lastY = currentY;
+        lastZ= currentZ;
+        itIsNotTheSameValue = true;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        if(isAccelerometerSensorAvailable){
+            sensorManager.registerListener(this,accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if(isAccelerometerSensorAvailable){
+            sensorManager.unregisterListener(this);
+        }
     }
 }
