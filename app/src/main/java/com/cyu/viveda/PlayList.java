@@ -1,8 +1,5 @@
 package com.cyu.viveda;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,7 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.io.File;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 
 public class PlayList extends AppCompatActivity {

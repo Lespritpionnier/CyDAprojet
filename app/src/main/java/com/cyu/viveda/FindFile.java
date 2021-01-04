@@ -2,17 +2,10 @@ package com.cyu.viveda;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -27,7 +20,6 @@ import java.util.ArrayList;
 public class FindFile extends AppCompatActivity {
     ListView listView;
     String[] items;
-    int count=0;
     public static final int PERMISSIONS_REQUEST = 0;
 
     @Override
@@ -40,55 +32,6 @@ public class FindFile extends AppCompatActivity {
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                 PERMISSIONS_REQUEST);
         display();
-
-        ArrayList<String> list_items=new ArrayList<String>();
-
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                count=count+1;
-                mode.setTitle(count+" item's selected");
-                list_items.add(listView.getItemAtPosition(position).toString());
-            }
-
-            @SuppressLint("ResourceType")
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.my_context_menu,menu
-                        );
-                return true ;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-              switch (item.getItemId()){
-                  case(R.id.add) :
-                  //send the selected song in the new playlist
-                      AddPlayList playlist= new AddPlayList();
-                      playlist.setListSelected(list_items);
-
-                      startActivity(new Intent(getApplicationContext(), AddPlayList.class));
-
-                      count=0;
-                      mode.finish();
-                      return true;
-
-                      //break;
-                  default: return false;
-              }
-            }
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                count=0;
-            }
-        });
     }
 
     public ArrayList<File> findSong(File root){
@@ -113,7 +56,7 @@ public class FindFile extends AppCompatActivity {
         items = new String[ mySongs.size() ];
         for(int i=0;i<mySongs.size();i++){
             //toast(mySongs.get(i).getName().toString());
-            items[i] = mySongs.get(i).getName().toString().replace(".mp3","").replace(".wav","");
+            items[i] = mySongs.get(i).getName().replace(".mp3","").replace(".wav","");
         }
         ArrayAdapter<String> adp = new
                 ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);

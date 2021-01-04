@@ -19,11 +19,6 @@
         <activity android:name=".OnePlayList"></activity>
         <activity android:name=".PlayList" />
 
-        <service
-            android:name=".MusicService"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity
             android:name=".MainPlayer"
             android:launchMode="singleTask">
@@ -33,9 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MusicPlayer" />
         <activity android:name=".FindFile" />
-        <activity android:name=".AddPlayList" />
     </application>
 
 </manifest>
